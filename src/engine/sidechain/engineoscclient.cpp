@@ -88,6 +88,9 @@ void EngineOscClient::sendState() {
       speed *= -1;
     lo_send(m_serverAddress, "/mixxx/deck/speed", "if", deckNr, speed);
 
+    ControlProxy bpm(ConfigKey(PlayerManager::groupForDeck(deckNr), "bpm"));
+    lo_send(m_serverAddress, "/mixxx/deck/bpm", "if", deckNr, float(bpm.get()));
+
     ControlProxy posRel(
         ConfigKey(PlayerManager::groupForDeck(deckNr), "playposition"));
     lo_send(m_serverAddress, "/mixxx/deck/pos", "if", deckNr,
