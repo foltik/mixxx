@@ -36,19 +36,19 @@ EngineOscClient::EngineOscClient(UserSettingsPointer &pConfig)
 
   ControlProxy *xfader =
       new ControlProxy(ConfigKey("[Master]", "crossfader"), this);
-  xfader->connectValueChanged(this, &EngineOscClient::maybeSendState);
+  xfader->connectValueChanged(this, &EngineOscClient::sendState);
   m_connectedControls.append(xfader);
 
   // connect play buttons
   for (int deckNr = 0; deckNr < (int)PlayerManager::numDecks(); deckNr++) {
     ControlProxy *play = new ControlProxy(
         ConfigKey(PlayerManager::groupForDeck(deckNr), "play"), this);
-    play->connectValueChanged(this, &EngineOscClient::maybeSendState);
+    play->connectValueChanged(this, &EngineOscClient::sendState);
     m_connectedControls.append(play);
 
     ControlProxy *volume = new ControlProxy(
         ConfigKey(PlayerManager::groupForDeck(deckNr), "volume"), this);
-    volume->connectValueChanged(this, &EngineOscClient::maybeSendState);
+    volume->connectValueChanged(this, &EngineOscClient::sendState);
     m_connectedControls.append(volume);
   }
 
@@ -61,7 +61,7 @@ EngineOscClient::EngineOscClient(UserSettingsPointer &pConfig)
 
 EngineOscClient::~EngineOscClient() {}
 
-void EngineOscClient::process(const CSAMPLE *pBuffer, const int iBufferSize) {
+void EngineOscClient::process(const CSAMPLE */*pBuffer*/, const int /*iBufferSize*/) {
   if (m_time.elapsed() < 10)
     return;
   sendState();
@@ -108,12 +108,6 @@ void EngineOscClient::sendState() {
             title.toUtf8().data());
   }
   m_time.restart();
-}
-
-void EngineOscClient::maybeSendState() {
-  if (m_time.elapsed() < 10)
-    return;
-  sendState();
 }
 
 void EngineOscClient::connectServer() {

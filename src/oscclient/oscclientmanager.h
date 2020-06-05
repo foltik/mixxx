@@ -22,7 +22,6 @@ public:
   virtual ~OscClientManager();
 public slots:
   void sendState();
-  void maybeSendState();
   void connectServer();
 
 private:

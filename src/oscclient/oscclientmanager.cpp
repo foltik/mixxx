@@ -24,5 +24,3 @@ OscClientManager::~OscClientManager() { qDebug() << "Delete OscClient"; }
 void OscClientManager::sendState() {}
 
 void OscClientManager::connectServer() {}
-
-void OscClientManager::maybeSendState() {}

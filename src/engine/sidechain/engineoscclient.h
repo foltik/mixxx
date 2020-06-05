@@ -37,7 +37,6 @@ public:
 
 public slots:
   void sendState();
-  void maybeSendState();
   void connectServer();
 
   // interface SideChainWorker
