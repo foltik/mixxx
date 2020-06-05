@@ -21,6 +21,4 @@ OscClientManager::OscClientManager(UserSettingsPointer &pConfig,
 
 OscClientManager::~OscClientManager() { qDebug() << "Delete OscClient"; }
 
-void OscClientManager::sendState() {}
-
 void OscClientManager::connectServer() {}

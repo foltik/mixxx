@@ -3,6 +3,7 @@
                              -------------------
     copyright            : (C) 2007 by John Sully
     copyright            : (C) 2010 by Tobias Rafreider
+    copyright            : (C) 2020 by Jack Foltz
     email                :
 ***************************************************************************/
 
@@ -28,90 +29,85 @@
 
 #include "mixer/playermanager.h"
 #include <QDebug>
+#include <string>
 
 EngineOscClient::EngineOscClient(UserSettingsPointer &pConfig)
     : m_pConfig(pConfig), m_prefUpdate(ConfigKey("[Preferences]", "updated")) {
 
   connectServer();
 
-  ControlProxy *xfader =
-      new ControlProxy(ConfigKey("[Master]", "crossfader"), this);
-  xfader->connectValueChanged(this, &EngineOscClient::sendState);
-  m_connectedControls.append(xfader);
+  auto control = [=](const char *name, const char *k) {
+    return new ControlProxy(ConfigKey(name, k), this);
+  };
+  auto deck_control = [=](int n, const char *k) {
+    return new ControlProxy(PlayerManager::groupForDeck(n), k, this);
+  };
 
-  // connect play buttons
+  auto send = [=](const char *path, const char *types, auto... params) {
+    std::string addr = std::string("/mixxx/") + path;
+    lo_send(m_serverAddress, addr.c_str(), types, params...);
+  };
+
+  // master controls
+  auto *xfader = control("[Master]", "crossfader");
+  xfader->connectValueChanged(this, [=](float v) { send("xfader", "f", v); });
+
+  // per-deck controls
   for (int deckNr = 0; deckNr < (int)PlayerManager::numDecks(); deckNr++) {
-    ControlProxy *play = new ControlProxy(
-        ConfigKey(PlayerManager::groupForDeck(deckNr), "play"), this);
-    play->connectValueChanged(this, &EngineOscClient::sendState);
-    m_connectedControls.append(play);
+    auto *play = deck_control(deckNr, "play");
+    play->connectValueChanged(this, [=](int i) {
+      send("deck/playing", "ii", deckNr, i);
+    });
 
-    ControlProxy *volume = new ControlProxy(
-        ConfigKey(PlayerManager::groupForDeck(deckNr), "volume"), this);
-    volume->connectValueChanged(this, &EngineOscClient::sendState);
-    m_connectedControls.append(volume);
+    auto *volume = deck_control(deckNr, "volume");
+    volume->connectValueChanged(this, [=](float f) {
+      send("deck/volume", "if", deckNr, f);
+    });
+
+    auto *beat = deck_control(deckNr, "beat_active");
+    beat->connectValueChanged(this, [=](int i) {
+      send("deck/beat", "ii", deckNr, i);
+    });
+
+    auto *bpm = deck_control(deckNr, "bpm");
+    bpm->connectValueChanged(this, [=](float f) {
+      send("deck/bpm", "if", deckNr, f);
+    });
+
+    auto *pos = deck_control(deckNr, "playposition");
+    pos->connectValueChanged(this, [=](float f) {
+      send("deck/pos", "if", deckNr, f);
+    });
+
+    auto *dur = deck_control(deckNr, "duration");
+    dur->connectValueChanged(this, [=](float f) {
+      send("deck/duration", "if", deckNr, f);
+    });
+
+    auto *rate = deck_control(deckNr, "rate");
+    rate->connectValueChanged(this, [=](float f) {
+        send("deck/rate", "if", deckNr, 1.0 + f);
+    });
+
+    auto *rateRange = deck_control(deckNr, "rateRange");
+    rateRange->connectValueChanged(this, [=](float f) {
+      send("deck/rateRange", "if", deckNr, f);
+    });
+
+    auto *rev = deck_control(deckNr, "reverse");
+    rev->connectValueChanged(this, [=](int i) {
+      send("deck/reverse", "ii", deckNr, i);
+    });
   }
 
-  // connect to settings changes
+  // reconnect on settings changes
   connect(&m_prefUpdate, SIGNAL(valueChanged(double)), this,
           SLOT(connectServer()));
-
-  m_time.start();
 }
 
 EngineOscClient::~EngineOscClient() {}
 
-void EngineOscClient::process(const CSAMPLE */*pBuffer*/, const int /*iBufferSize*/) {
-  if (m_time.elapsed() < 10)
-    return;
-  sendState();
-}
-
-void EngineOscClient::sendState() {
-  PlayerInfo &playerInfo = PlayerInfo::instance();
-  int numDecks = (int)PlayerManager::numDecks();
-  lo_send(m_serverAddress, "/mixxx/numDecks", "i", numDecks);
-
-  for (int deckNr = 0; deckNr < numDecks; deckNr++) {
-    lo_send(m_serverAddress, "/mixxx/deck/playing", "ii", deckNr,
-            (int)playerInfo.isDeckPlaying(deckNr));
-    lo_send(m_serverAddress, "/mixxx/deck/volume", "if", deckNr,
-            playerInfo.getDeckVolume(deckNr));
-
-    // speed
-    ControlProxy rate(ConfigKey(PlayerManager::groupForDeck(deckNr), "rate"));
-    ControlProxy rateRange(
-        ConfigKey(PlayerManager::groupForDeck(deckNr), "rateRange"));
-    ControlProxy rev(ConfigKey(PlayerManager::groupForDeck(deckNr), "reverse"));
-    float speed = 1 + float(rate.get()) * float(rateRange.get());
-    if (rev.get())
-      speed *= -1;
-    lo_send(m_serverAddress, "/mixxx/deck/speed", "if", deckNr, speed);
-
-    ControlProxy bpm(ConfigKey(PlayerManager::groupForDeck(deckNr), "bpm"));
-    lo_send(m_serverAddress, "/mixxx/deck/bpm", "if", deckNr, float(bpm.get()));
-
-    ControlProxy posRel(
-        ConfigKey(PlayerManager::groupForDeck(deckNr), "playposition"));
-    lo_send(m_serverAddress, "/mixxx/deck/pos", "if", deckNr,
-            float(posRel.get()));
-
-    ControlProxy dur(
-        ConfigKey(PlayerManager::groupForDeck(deckNr), "duration"));
-    lo_send(m_serverAddress, "/mixxx/deck/duration", "if", deckNr,
-            float(dur.get()));
-
-    QString title = "";
-    TrackPointer pTrack =
-        playerInfo.getTrackInfo(PlayerManager::groupForDeck(deckNr));
-    if (pTrack) {
-      title = pTrack->getTitle();
-    }
-    lo_send(m_serverAddress, "/mixxx/deck/title", "is", deckNr,
-            title.toUtf8().data());
-  }
-  m_time.restart();
-}
+void EngineOscClient::process(const CSAMPLE*, const int) {}
 
 void EngineOscClient::connectServer() {
   QString server =

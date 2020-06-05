@@ -21,7 +21,6 @@ public:
   OscClientManager(UserSettingsPointer &pConfig, EngineMaster *pEngine);
   virtual ~OscClientManager();
 public slots:
-  void sendState();
   void connectServer();
 
 private:

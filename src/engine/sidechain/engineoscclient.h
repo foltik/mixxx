@@ -24,7 +24,6 @@
 #include "preferences/usersettings.h"
 #include "track/track.h"
 #include <QList>
-#include <QElapsedTimer>
 
 class ConfigKey;
 class Encoder;
@@ -36,7 +35,6 @@ public:
   virtual ~EngineOscClient();
 
 public slots:
-  void sendState();
   void connectServer();
 
   // interface SideChainWorker
@@ -44,10 +42,8 @@ public slots:
   void shutdown() {}
 
 private:
-  QElapsedTimer m_time;
   lo_address m_serverAddress;
   UserSettingsPointer m_pConfig;
-  QList<ControlProxy *> m_connectedControls;
   ControlProxy m_prefUpdate;
 };
 
