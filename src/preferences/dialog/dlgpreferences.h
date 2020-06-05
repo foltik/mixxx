@@ -48,6 +48,7 @@ class DlgPrefAutoDJ;
 class DlgPrefBroadcast;
 class DlgPrefRecord;
 class DlgPrefBeats;
+class DlgPrefOsc;
 class DlgPrefKey;
 class DlgPrefReplayGain;
 #ifdef __LILV__
@@ -129,9 +130,9 @@ DlgPreferences(MixxxMainWindow* mixxx,
     QStringList m_geometry;
     UserSettingsPointer m_pConfig;
     PreferencesPage m_soundPage;
+    DlgPrefOsc* m_woscPage;
     DlgPrefControllers* m_pControllersDlg;
     DlgPrefColors* m_colorsPage;
-    QTreeWidgetItem* m_pColorsButton;
 
     QSize m_pageSizeHint;
 };

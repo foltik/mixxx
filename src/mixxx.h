@@ -30,6 +30,8 @@ class Library;
 class PlayerManager;
 class RecordingManager;
 class SettingsManager;
+class OscClientManager;
+class OscServer;
 class SkinLoader;
 class SoundManager;
 class TrackCollectionManager;
@@ -139,6 +141,10 @@ class MixxxMainWindow : public QMainWindow {
 
     PlayerManager* m_pPlayerManager;
     RecordingManager* m_pRecordingManager;
+    // OscClientManager
+    std::unique_ptr<OscClientManager> m_pOscClientManager;
+    // OscServer
+    std::unique_ptr<OscServer> m_pOscServer;
 #ifdef __BROADCAST__
     BroadcastManager* m_pBroadcastManager;
 #endif

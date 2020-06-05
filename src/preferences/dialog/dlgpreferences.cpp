@@ -54,6 +54,7 @@
 #endif
 
 #include "preferences/dialog/dlgprefrecord.h"
+#include "preferences/dialog/dlgprefosc.h"
 #include "preferences/dialog/dlgprefbeats.h"
 #include "preferences/dialog/dlgprefkey.h"
 #include "preferences/dialog/dlgprefreplaygain.h"
@@ -175,6 +176,10 @@ DlgPreferences::DlgPreferences(MixxxMainWindow* mixxx, SkinLoader* pSkinLoader, 
     addPageWidget(PreferencesPage(
             new DlgPrefBeats(this, m_pConfig),
             createTreeItem(tr("Beat Detection"), QIcon(":/images/preferences/ic_preferences_bpmdetect.svg"))));
+
+    addPageWidget(PreferencesPage(
+            new DlgPrefOsc(this, m_pConfig),
+            createTreeItem(tr("OSC", QIcon(":/images/preferences/ic_preferences_osc.png"))));
 
     addPageWidget(PreferencesPage(
             new DlgPrefKey(this, m_pConfig),

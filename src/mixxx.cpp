@@ -38,6 +38,9 @@
 #include "preferences/settingsmanager.h"
 #include "recording/recordingmanager.h"
 #include "skin/launchimage.h"
+#include "oscclient/oscclientmanager.h"
+#include "oscserver/oscserver.h"
+#include "broadcast/broadcastmanager.h"
 #include "skin/legacyskinparser.h"
 #include "skin/skinloader.h"
 #include "soundio/soundmanager.h"
@@ -131,6 +134,8 @@ MixxxMainWindow::MixxxMainWindow(QApplication* pApp, const CmdlineArgs& args)
           m_pSoundManager(nullptr),
           m_pPlayerManager(nullptr),
           m_pRecordingManager(nullptr),
+          m_pOscClientManager(nullptr),
+          m_pOscServer(nullptr),
 #ifdef __BROADCAST__
           m_pBroadcastManager(nullptr),
 #endif
@@ -627,6 +632,11 @@ void MixxxMainWindow::initialize(QApplication* pApp, const CmdlineArgs& args) {
             this,
             &MixxxMainWindow::slotChangedPlayingDeck);
 
+    m_pOscClientManager =
+        std::make_unique<OscClientManager>(pConfig, m_pEngine);
+
+    m_pOscServer = std::make_unique<OscServer>(pConfig);
+
     // this has to be after the OpenGL widgets are created or depending on a
     // million different variables the first waveform may be horribly
     // corrupted. See bug 521509 -- bkgood ?? -- vrince
@@ -738,6 +748,10 @@ void MixxxMainWindow::finalize() {
     // RecordingManager depends on config, engine
     qDebug() << t.elapsed(false).debugMillisWithUnit() << "deleting RecordingManager";
     delete m_pRecordingManager;
+
+    // Deleting m_pOscClientManager is unnecessary as it is a unique_ptr
+
+    // Deleting m_pOscServer is unnecessary as it is a unique_ptr
 
 #ifdef __BROADCAST__
     // BroadcastManager depends on config, engine

@@ -500,6 +500,7 @@ add_library(mixxx-lib STATIC EXCLUDE_FROM_ALL
   src/engine/positionscratchcontroller.cpp
   src/engine/readaheadmanager.cpp
   src/engine/sidechain/enginenetworkstream.cpp
+  src/engine/sidechain/engineoscclient.cpp
   src/engine/sidechain/enginerecord.cpp
   src/engine/sidechain/enginesidechain.cpp
   src/engine/sidechain/networkinputstreamworker.cpp
@@ -640,6 +641,8 @@ add_library(mixxx-lib STATIC EXCLUDE_FROM_ALL
   src/musicbrainz/web/musicbrainzrecordingstask.cpp
   src/network/jsonwebtask.cpp
   src/network/webtask.cpp
+  src/oscclient/oscclientmanager.cpp
+  src/oscserver/oscserver.cpp
   src/preferences/broadcastprofile.cpp
   src/preferences/broadcastsettings.cpp
   src/preferences/broadcastsettings_legacy.cpp
@@ -670,6 +673,8 @@ add_library(mixxx-lib STATIC EXCLUDE_FROM_ALL
   src/preferences/dialog/dlgpreflv2dlg.ui
   src/preferences/dialog/dlgprefnovinyl.cpp
   src/preferences/dialog/dlgprefnovinyldlg.ui
+  src/preferences/dialog/dlgprefosc.cpp
+  src/preferences/dialog/dlgprefoscdlg.ui
   src/preferences/dialog/dlgprefrecord.cpp
   src/preferences/dialog/dlgprefrecorddlg.ui
   src/preferences/dialog/dlgprefreplaygain.cpp
@@ -1695,6 +1700,11 @@ target_link_libraries(mixxx-lib PUBLIC OpenGL::GL)
 find_package(OggVorbis REQUIRED)
 target_include_directories(mixxx-lib SYSTEM PUBLIC ${OggVorbis_INCLUDE_DIRS})
 target_link_libraries(mixxx-lib PUBLIC ${OggVorbis_LIBRARIES})
+
+# LibLO
+find_package(LibLO REQUIRED)
+target_include_directories(mixxx-lib SYSTEM PUBLIC ${LIBLO_INCLUDE_DIRS})
+target_link_libraries(mixxx-lib PUBLIC ${LIBLO_LIBRARIES})
 
 # PortAudio
 find_package(PortAudio REQUIRED)
