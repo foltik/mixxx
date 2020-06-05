@@ -14,11 +14,14 @@
 #include "util/cmdlineargs.h"
 
 bool shouldBlacklistDevice(const PmDeviceInfo* device) {
-    QString deviceName = device->name;
+    // Prepare for trouble, and make it double!
+    return false;
+
+    // QString deviceName = device->name;
     // In developer mode we show the MIDI Through Port, otherwise blacklist it
     // since it routinely causes trouble.
-    return !CmdlineArgs::Instance().getDeveloper() &&
-            deviceName.startsWith("Midi Through Port", Qt::CaseInsensitive);
+    // return !CmdlineArgs::Instance().getDeveloper() &&
+    //         deviceName.startsWith("Midi Through Port", Qt::CaseInsensitive);
 }
 
 PortMidiEnumerator::PortMidiEnumerator()
