@@ -86,7 +86,7 @@ EngineOscClient::EngineOscClient(UserSettingsPointer &pConfig)
 
     auto *rate = deck_control(deckNr, "rate");
     rate->connectValueChanged(this, [=](float f) {
-        send("deck/rate", "if", deckNr, 1.0 + f);
+      send("deck/rate", "if", deckNr, 1.0 + f);
     });
 
     auto *rateRange = deck_control(deckNr, "rateRange");
@@ -101,13 +101,26 @@ EngineOscClient::EngineOscClient(UserSettingsPointer &pConfig)
   }
 
   // reconnect on settings changes
-  connect(&m_prefUpdate, SIGNAL(valueChanged(double)), this,
-          SLOT(connectServer()));
+  //connect(&m_prefUpdate, SIGNAL(valueChanged(double)), this,
+  //        SLOT(connectServer()));
 }
 
 EngineOscClient::~EngineOscClient() {}
 
-void EngineOscClient::process(const CSAMPLE*, const int) {}
+void EngineOscClient::process(const CSAMPLE*, const int) {
+  PlayerInfo &playerInfo = PlayerInfo::instance();
+
+  for (int deckNr = 0; deckNr < (int)PlayerManager::numDecks(); deckNr++) {
+    TrackPointer track =
+        playerInfo.getTrackInfo(PlayerManager::groupForDeck(deckNr));
+    if (track) {
+      lo_send(m_serverAddress, "/mixxx/deck/title", "is",
+              deckNr, track->getTitle().toUtf8().data());
+      lo_send(m_serverAddress, "/mixxx/deck/artist", "is",
+              deckNr, track->getArtist().toUtf8().data());
+    }
+  }
+}
 
 void EngineOscClient::connectServer() {
   QString server =
