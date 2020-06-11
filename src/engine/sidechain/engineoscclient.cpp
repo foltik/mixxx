@@ -118,6 +118,8 @@ void EngineOscClient::process(const CSAMPLE*, const int) {
               deckNr, track->getTitle().toUtf8().data());
       lo_send(m_serverAddress, "/mixxx/deck/artist", "is",
               deckNr, track->getArtist().toUtf8().data());
+      lo_send(m_serverAddress, "/mixxx/deck/file", "is",
+              deckNr, track->getLocation().toUtf8().data());
     }
   }
 }
