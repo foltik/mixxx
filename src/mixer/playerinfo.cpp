@@ -142,10 +142,8 @@ double PlayerInfo::getDeckVolume(int deckNr)
         return 0;
     }
 
-    double xfl, xfr;
-    // TODO: supply correct parameters to the function. If the hamster style
-    // for the crossfader is enabled, the result is currently wrong.
-    EngineXfader::getXfadeGains(m_pCOxfader->get(), 1.0, 0.0, false, false,
+    CSAMPLE_GAIN xfl, xfr;
+    EngineXfader::getXfadeGains(m_pCOxfader->get(), 1.0, 0.0, MIXXX_XFADER_ADDITIVE, false,
                                 &xfl, &xfr);
 
     int orient = pDc->m_orientation.get();
@@ -168,9 +166,13 @@ void PlayerInfo::updateCurrentPlayingDeck() {
     int maxDeck = -1;
 
     for (int i = 0; i < (int)PlayerManager::numDecks(); ++i) {
+        DeckControls* pDc = getDeckControls(i);
 
-        double dvol = getDeckVolume(i);
-        if(dvol == 0.0)
+        if (pDc->m_play.get() == 0.0) {
+            continue;
+        }
+
+        if (pDc->m_pregain.get() <= 0.25) {
             continue;
         }
 

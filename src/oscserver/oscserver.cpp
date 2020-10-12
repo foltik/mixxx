@@ -18,13 +18,13 @@ int oscMsgHandler(const char *path, const char *types, lo_arg **argv, int argc,
 
   if (!pathMatch.hasMatch()) {
     qWarning() << "Invalid OSC path: " << QString::fromLatin1(path);
-    qWarning() << "Proper OSC path format: /mixxx/<group>/<control>";
+    // qWarning() << "Proper OSC path format: /mixxx/<group>/<control>";
     return 1;
   }
 
   ConfigKey key = ConfigKey(pathMatch.captured(1), pathMatch.captured(2));
 
-  if (key.isNull() || key.isEmpty()) {
+  if (!key.isValid()) {
     qWarning() << "Invalid group/key pair specified in OSC path: "
                << QString::fromLatin1(path);
     return 1;

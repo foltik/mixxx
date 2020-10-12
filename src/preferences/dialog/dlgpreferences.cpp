@@ -179,7 +179,7 @@ DlgPreferences::DlgPreferences(MixxxMainWindow* mixxx, SkinLoader* pSkinLoader, 
 
     addPageWidget(PreferencesPage(
             new DlgPrefOsc(this, m_pConfig),
-            createTreeItem(tr("OSC", QIcon(":/images/preferences/ic_preferences_osc.png"))));
+            createTreeItem(tr("OSC"), QIcon(":/images/preferences/ic_preferences_osc.png"))));
 
     addPageWidget(PreferencesPage(
             new DlgPrefKey(this, m_pConfig),
