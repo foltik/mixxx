@@ -118,7 +118,7 @@ void EngineOscClient::process(const CSAMPLE*, const int) {
               deckNr, track->getTitle().toUtf8().data());
       lo_send(m_serverAddress, "/mixxx/deck/artist", "is",
               deckNr, track->getArtist().toUtf8().data());
-      lo_send(m_serverAddress, "/mixxx/deck/song", "is",
+      lo_send(m_serverAddress, "/mixxx/deck/song", "iss",
               deckNr, track->getArtist().toUtf8().data(),
 	      track->getTitle().toUtf8().data());
       lo_send(m_serverAddress, "/mixxx/deck/file", "is",
