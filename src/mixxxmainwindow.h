@@ -16,6 +16,8 @@ class DlgPreferences;
 class DlgKeywheel;
 class GuiTick;
 class LaunchImage;
+class OscClientManager;
+class OscServer;
 class VisualsManager;
 class WMainMenuBar;
 
@@ -113,6 +115,7 @@ class MixxxMainWindow : public QMainWindow {
     LaunchImage* m_pLaunchImage;
 
     std::shared_ptr<mixxx::skin::SkinLoader> m_pSkinLoader;
+
     GuiTick* m_pGuiTick;
     VisualsManager* m_pVisualsManager;
 

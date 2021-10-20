@@ -35,6 +35,7 @@ class DlgPrefBroadcast;
 #endif // __BROADCAST__
 class DlgPrefRecord;
 class DlgPrefBeats;
+class DlgPrefOsc;
 class DlgPrefKey;
 class DlgPrefReplayGain;
 #ifdef __LILV__

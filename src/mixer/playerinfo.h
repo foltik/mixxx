@@ -12,6 +12,7 @@
 
 class PlayerInfo : public QObject {
     Q_OBJECT
+
   public:
     static PlayerInfo& create();
     static PlayerInfo& instance();
@@ -24,12 +25,12 @@ class PlayerInfo : public QObject {
     bool isTrackLoaded(const TrackPointer& pTrack) const;
     bool isFileLoaded(const QString& track_location) const;
 
-  signals:
+signals:
     void currentPlayingDeckChanged(int deck);
     void currentPlayingTrackChanged(TrackPointer pTrack);
     void trackChanged(const QString& group, TrackPointer pNewTrack, TrackPointer pOldTrack);
 
-  private:
+private:
     class DeckControls {
         public:
           DeckControls(const QString& group)

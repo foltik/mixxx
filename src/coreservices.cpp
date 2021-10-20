@@ -8,6 +8,7 @@
 #ifdef __BROADCAST__
 #include "broadcast/broadcastmanager.h"
 #endif
+#include "oscclient/oscclientmanager.h"
 #include "control/controlindicatortimer.h"
 #include "controllers/controllermanager.h"
 #include "controllers/keyboard/keyboardeventfilter.h"
@@ -292,6 +293,10 @@ void CoreServices::initialize(QApplication* pApp) {
             m_pSettingsManager.get(),
             m_pSoundManager.get());
 #endif
+
+    m_pOscClientManager = std::make_shared<OscClientManager>(
+            pConfig,
+            m_pEngine.get());
 
 #ifdef __VINYLCONTROL__
     m_pVCManager = std::make_shared<VinylControlManager>(this, pConfig, m_pSoundManager.get());

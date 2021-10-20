@@ -21,6 +21,7 @@ class RecordingManager;
 #ifdef __BROADCAST__
 class BroadcastManager;
 #endif
+class OscClientManager;
 class ControllerManager;
 class VinylControlManager;
 class TrackCollectionManager;
@@ -137,6 +138,7 @@ class CoreServices : public QObject {
 #ifdef __BROADCAST__
     std::shared_ptr<BroadcastManager> m_pBroadcastManager;
 #endif
+    std::shared_ptr<OscClientManager> m_pOscClientManager;
     std::shared_ptr<ControllerManager> m_pControllerManager;
 
     std::shared_ptr<VinylControlManager> m_pVCManager;

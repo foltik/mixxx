@@ -621,6 +621,7 @@ add_library(mixxx-lib STATIC EXCLUDE_FROM_ALL
   src/engine/positionscratchcontroller.cpp
   src/engine/readaheadmanager.cpp
   src/engine/sidechain/enginenetworkstream.cpp
+  src/engine/sidechain/engineoscclient.cpp
   src/engine/sidechain/enginerecord.cpp
   src/engine/sidechain/enginesidechain.cpp
   src/engine/sidechain/networkinputstreamworker.cpp
@@ -732,6 +733,8 @@ add_library(mixxx-lib STATIC EXCLUDE_FROM_ALL
   src/network/jsonwebtask.cpp
   src/network/networktask.cpp
   src/network/webtask.cpp
+  src/oscclient/oscclientmanager.cpp
+  src/oscserver/oscserver.cpp
   src/preferences/configobject.cpp
   src/preferences/dialog/dlgprefautodj.cpp
   src/preferences/dialog/dlgprefautodjdlg.ui
@@ -757,6 +760,8 @@ add_library(mixxx-lib STATIC EXCLUDE_FROM_ALL
   src/preferences/dialog/dlgpreflibrary.cpp
   src/preferences/dialog/dlgpreflibrarydlg.ui
   src/preferences/dialog/dlgpreflv2dlg.ui
+  src/preferences/dialog/dlgprefosc.cpp
+  src/preferences/dialog/dlgprefoscdlg.ui
   src/preferences/dialog/dlgprefrecord.cpp
   src/preferences/dialog/dlgprefrecorddlg.ui
   src/preferences/dialog/dlgprefreplaygain.cpp
@@ -2054,6 +2059,11 @@ target_link_libraries(mixxx-lib PRIVATE Ogg::ogg)
 # Vorbis
 find_package(Vorbis REQUIRED)
 target_link_libraries(mixxx-lib PRIVATE Vorbis::vorbis Vorbis::vorbisenc Vorbis::vorbisfile)
+
+# LibLO
+find_package(LibLO REQUIRED)
+target_include_directories(mixxx-lib SYSTEM PUBLIC ${LIBLO_INCLUDE_DIRS})
+target_link_libraries(mixxx-lib PUBLIC ${LIBLO_LIBRARIES})
 
 # PortAudio
 find_package(PortAudio REQUIRED)
